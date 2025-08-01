@@ -11,7 +11,7 @@ from .logging import logger
 
 sqs_client = boto3.client(
     "sqs",
-    # region_name=settings.get_aws_region()
+    region_name=settings.get_aws_region()
     # aws_access_key_id=settings.get_access_key_id(),
     # aws_secret_access_key=settings.get_access_secret_key()
 )
