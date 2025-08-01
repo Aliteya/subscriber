@@ -1,6 +1,5 @@
 import boto3
 import json
-import time
 import asyncio
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -11,7 +10,7 @@ from .database import init_db, close_db_connections, get_session
 from .logging import logger
 
 sqs_client = boto3.client(
-    "sqs"
+    "sqs",
     # region_name=settings.get_aws_region()
     # aws_access_key_id=settings.get_access_key_id(),
     # aws_secret_access_key=settings.get_access_secret_key()
