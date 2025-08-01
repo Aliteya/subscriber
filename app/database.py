@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 engine = create_async_engine(settings.get_url(), echo=True)
 
 async def init_db():
-    logger.info("Inicialize connection")
+    logger.info("Initialize connection")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
