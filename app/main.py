@@ -8,7 +8,7 @@ from .schemas import UserInput
 from .database import init_db, get_session
 from .logging import logger
 
-asyncio.run(init_db())
+# asyncio.run(init_db())
 
 async def process_record(record: dict):
     try:
