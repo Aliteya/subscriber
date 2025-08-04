@@ -1,6 +1,6 @@
 from settings import settings
 from models import Base
-from logging import logger
+from mylogging import logger
 import boto3
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
