@@ -2,11 +2,11 @@ from .settings import settings
 from .models import Base
 from .logging import logger
 import boto3
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
 
 engine = None
-AsyncSessionLocal = None
+SessionLocal = None
 
 ssm_client = boto3.client("ssm")
 def get_ssm_parameter(parameter_name: str) -> str:
@@ -14,8 +14,8 @@ def get_ssm_parameter(parameter_name: str) -> str:
     response = ssm_client.get_parameter(Name=parameter_name, WithDecryption=True)
     return response['Parameter']['Value']
 
-async def init_db():
-    global engine, AsyncSessionLocal
+def init_db():
+    global engine, SessionLocal
 
     if engine is not None:
         return
@@ -28,17 +28,20 @@ async def init_db():
     db_pass = get_ssm_parameter(settings.DATABASE_PASSWORD)
     db_name = get_ssm_parameter(settings.DATABASE_NAME)
 
-    db_url = f"postgresql+asyncpg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+    db_url = f"postgresql+psycopg2://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
 
-    engine = create_async_engine(db_url)
-    AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
-
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-async def get_session():
-    if AsyncSessionLocal is None:
-        await init_db()
+    engine = create_engine(db_url)
     
-    async with AsyncSessionLocal() as session:
-        yield session
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+    Base.metadata.create_all(bind=engine)
+
+def get_session():
+    if SessionLocal is None:
+        init_db()
+    
+    db: Session = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

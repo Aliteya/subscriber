@@ -1,5 +1,5 @@
 fastapi[all]
 pydantic_settings
 sqlalchemy
-asyncpg
+psycopg2
 boto3
