@@ -1,10 +1,10 @@
 import json
 from sqlalchemy.exc import SQLAlchemyError
 
-from .models import Log
-from .schemas import UserInput
-from .database import init_db, get_session # Импортируем синхронные функции
-from .logging import logger
+from models import Log
+from schemas import UserInput
+from database import init_db, get_session # Импортируем синхронные функции
+from logging import logger
 
 try:
     init_db()
